@@ -1,9 +1,14 @@
 import { faker } from "@faker-js/faker/locale/fr"
+import { fieldGenerators, typeGenerators } from "./types.ts";
 
+/**
+ * Read and parse JSON file
+ * @param fileName 
+ * @returns 
+ */
 export async function getJSON(fileName: string): Promise<JSON> {
     try {
         const file = await Deno.readTextFile(fileName);
-        console.log("File content:", file);
         return JSON.parse(file);
     } catch (error) {
         console.error("Error reading JSON file:", error);
@@ -11,43 +16,24 @@ export async function getJSON(fileName: string): Promise<JSON> {
     }
 }
 
-const fieldGenerators: Record<string, () => unknown> = {
-    email: () => faker.internet.email(),
-    firstname: () => faker.person.firstName(),
-    lastname: () => faker.person.lastName(),
-    name: () => faker.person.fullName(),
-    phone: () => faker.phone.number(),
-    address: () => faker.location.streetAddress(),
-    city: () => faker.location.city(),
-    country: () => faker.location.country(),
-    zipcode: () => faker.location.zipCode(),
-    avatar: () => faker.image.avatar(),
-    url: () => faker.internet.url(),
-    username: () => faker.internet.userName(),
-    password: () => faker.internet.password(),
-    id: () => faker.string.uuid(),
-    date: () => faker.date.recent(),
-    createdat: () => faker.date.recent(),
-    datecreation: () => faker.date.birthdate(),
-    company: () => faker.company.name(),
-    job: () => faker.person.jobTitle(),
-    description: () => faker.lorem.paragraph(),
-    title: () => faker.lorem.sentence(),
-};
-
-const typeGenerators: Record<string, () => unknown> = {
-    string: () => faker.lorem.words(),
-    number: () => faker.number.int({ min: 1, max: 1000 }),
-    boolean: () => faker.datatype.boolean(),
-};
-
-export async function analyzeSchemaJSON(fileName: string) {
+/**
+ * Analyze schema from JSON file and generate fake data
+ * @param fileName 
+ * @returns 
+ */
+export async function analyzeSchemaJSON(fileName: string): Promise<unknown> {
     const jsonData = await getJSON(fileName);
     const fakeJSON = generateFakeValue(jsonData);
-    console.log("Fake JSON:", JSON.stringify(fakeJSON, null, 2));
+
     return fakeJSON;
 }
 
+/**
+ * Generate fake value based on the provided schema
+ * @param value 
+ * @param key 
+ * @returns 
+ */
 function generateFakeValue(value: unknown, key?: string): unknown {
     if (Array.isArray(value)) {
         if (value.length === 0) return [];
