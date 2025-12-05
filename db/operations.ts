@@ -17,18 +17,17 @@ const database = new MongoConnector({
 export class OperationsMongo {
     operations: AnyBulkWriteOperation<object>[];
 
-    constructor() {
-        this.operations = [];
+    constructor(operations?: AnyBulkWriteOperation<object>[]) {
+        this.operations = operations || [];
     }
 
     async listCollections(): Promise<string[]> {
         try {
             const db = await database.connectedClient();
             const collections = await db.listCollections().toArray();
-            database.disconnectClient()
             return collections.map((col) => col.name);
         } catch (error) {
-            console.error("Error listing collections:", error);
+            console.error("❌ Error listing collections:", error);
             throw error;
         }
     }
@@ -39,19 +38,29 @@ export class OperationsMongo {
             const collection = db.collection(collectionName);
 
             await collection.bulkWrite(this.operations);
-            console.log(`🚀 Saved ${this.operations.length} documents to collection: ${collectionName}`);
+            console.log(`✅ Saved ${this.operations.length} documents to collection: ${collectionName}`);
             this.operations = [];
             await database.disconnectClient();
         }
     }
 
-    async insertDocument(document: any, numberOfDocuments: number) {
+    async insertDocument(document: any) {
         try {
-            for (let i = 0; i < numberOfDocuments; i++) {
-                await this.operations.push({ insertOne: { document: { _id: new ObjectId(), ...document } } });
-            }
+            await this.operations.push({ insertOne: { document: { _id: new ObjectId(), ...document } } });
         } catch (error) {
-            console.error("Error inserting document:", error);
+            console.error("❌ Error inserting document:", error);
+            throw error;
+        }
+    }
+
+    async deleteAllDocuments(collectionName: string) {
+        try {
+            const db = await database.connectedClient();
+            const collection = db.collection(collectionName);
+            const result = await collection.deleteMany({});
+            console.log(`🗑️ Deleted ${result.deletedCount} documents from collection: ${collectionName}`);
+        } catch (error) {
+            console.error("❌ Error deleting documents:", error);
             throw error;
         }
     }

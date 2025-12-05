@@ -8,14 +8,10 @@ type DatabaseConfig = {
     databaseName?: string;
 }
 
-type DatabaseCloseConfig = {
-    close(): void;
-}
-
 export class MongoConnector {
     uri: string;
     databaseName: string;
-    database?: DatabaseCloseConfig;
+    database?: Db;
 
     constructor(params: DatabaseConfig) {
         const { uri, databaseName} = params;
@@ -29,8 +25,6 @@ export class MongoConnector {
             await client.connect();
 
             database = client.db(this.databaseName);
-
-            console.log("🚀 Connected to database");
             return database;
         } catch (error) {
             console.error("Failed to connect to database", error);
@@ -49,6 +43,6 @@ export class MongoConnector {
         if (!database) {
             await this.connectedClient();
         }
-        return this.database as DatabaseCloseConfig;
+        return this.database as Db;
     }
 }
