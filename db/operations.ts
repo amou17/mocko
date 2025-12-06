@@ -53,14 +53,49 @@ export class OperationsMongo {
         }
     }
 
-    async deleteAllDocuments(collectionName: string) {
+    async deleteAllDocuments(collectionName: string){
         try {
             const db = await database.connectedClient();
             const collection = db.collection(collectionName);
             const result = await collection.deleteMany({});
             console.log(`🗑️ Deleted ${result.deletedCount} documents from collection: ${collectionName}`);
+            return result.deletedCount;
         } catch (error) {
             console.error("❌ Error deleting documents:", error);
+            throw error;
+        }
+    }
+
+    async createCollection(collectionName: string) {
+        try {
+            const db = await database.connectedClient();
+            await db.createCollection(collectionName);
+            console.log(`✅ Collection created: ${collectionName}`);
+        } catch (error) {
+            console.error("❌ Error creating collection:", error);
+            throw error;
+        }
+    }
+
+    async findDocuments(collectionName: string) {
+        try {
+            const db = await database.connectedClient();
+            const collection = db.collection(collectionName);
+            const documents = await collection.find({}).toArray();
+            return documents;
+        } catch (error) {
+            console.log("❌ Error finding documents:", error);
+            throw error;
+        }
+    }
+
+    async deleteCollection(collectionName: string) {
+        try {
+            const db = await database.connectedClient();
+            await db.collection(collectionName).drop();
+            console.log(`🗑️ Collection deleted: ${collectionName}`);
+        } catch (error) {
+            console.error("❌ Error deleting collection:", error);
             throw error;
         }
     }

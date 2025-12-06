@@ -1,8 +1,9 @@
 import { Command } from "@cliffy/command";
-import { Select, Number, Confirm } from "@cliffy/prompt";
+import { Number, Confirm } from "@cliffy/prompt";
 
 import { OperationsMongo } from "../../db/operations.ts";
 import { analyzeSchemaJSON } from "../../core/schema-analyzer.ts";
+import { collectionCommand, firstCommand, exitCommand, createCommand } from "./index.ts";
 
 await new Command()
     .name("CLI mocko - Data Generator")
@@ -13,66 +14,80 @@ await new Command()
     .action(async (options) => {
         const operations = new OperationsMongo();
 
-        const promptChoice = await Select.prompt({
-            message: "Que voulez-vous faire maintenant ?",
-            options: [
-                { name: "Lister les collections", value: "Yes"},
-                { name: "Quitter", value: "Exit"},
-            ],
-        });
-
-        if( promptChoice === "Yes") {
-            const collections =  await operations.listCollections();
-
-            const promptChooseDb: string = await Select.prompt({
-                message: "Sélectionnez une collection",
-                options: [
-                    ...collections.map((col) => ({ name: col, value: col })),
-                    { name: "Quitter", value: "Exit"}
-                ],
-            })
+        async function handleCollectionFlow() {
+            const promptChooseDb: string = await collectionCommand(operations);
 
             if( promptChooseDb ) {
-                if( promptChooseDb === "Exit") {
-                    console.log("Au revoir !");
-                    Deno.exit(0);
-                } else {
-                    console.log(`Vous avez sélectionné la collection : ${promptChooseDb}`);
+                if( promptChooseDb === "Exit" ) {
+                    exitCommand();
+                }
+                
+                console.log(`Vous avez sélectionné la collection : ${promptChooseDb}`);
 
-                    const promptDelete: boolean = await Confirm.prompt("Voulez-vous supprimer tous les documents existants dans cette collection avant d'insérer de nouveaux documents ?");
+                let promptDelete = false;
+                const existingDocuments = await operations.findDocuments(promptChooseDb);
+                if( existingDocuments.length > 0) {
+                    promptDelete = await Confirm.prompt("Voulez-vous supprimer tous les documents existants dans cette collection avant d'insérer de nouveaux documents ?");
+                }
 
-                    if( promptDelete ) {
-                        await operations.deleteAllDocuments(promptChooseDb);
-                    }
+                if( promptDelete ) {
+                    await operations.deleteAllDocuments(promptChooseDb);
+                }
 
-                    const promptInsert: number = await Number.prompt({
-                        message: "Combien de documents voulez-vous insérer dans cette collection ?",
-                        min: 0,
-                        max: 10000,
-                        hint: "Entrez un nombre",
-                    });
+                const promptInsert: number = await Number.prompt({
+                    message: "Combien de documents voulez-vous insérer dans cette collection ?",
+                    min: 0,
+                    max: 10000,
+                    hint: "Entrez un nombre",
+                });
 
-                    if( promptInsert <= 0 ) {
-                        console.log("Aucun document à insérer");
-                        Deno.exit(0);
-                    }
-
-                    const outputDocuments: unknown[] = []
-                    
-                    for(let i =0; i < promptInsert; i++) {
-                        outputDocuments.push(await analyzeSchemaJSON(options.file));
-                    }
-                    for (const documentJSON of outputDocuments) {
-                        await operations.insertDocument(documentJSON);
-                    }
-
-                    await operations.saveDocuments(promptChooseDb);
-
+                if( promptInsert <= 0 ) {
+                    console.log("Aucun document à insérer");
                     Deno.exit(0);
                 }
+
+                const outputDocuments: unknown[] = []
+                
+                for(let i =0; i < promptInsert; i++) {
+                    outputDocuments.push(await analyzeSchemaJSON(options.file));
+                }
+                for (const documentJSON of outputDocuments) {
+                    await operations.insertDocument(documentJSON);
+                }
+
+                await operations.saveDocuments(promptChooseDb);
             }
+        }
+
+        const promptChoice: string = await firstCommand();
+
+        if(promptChoice === "Create") {
+            await createCommand(operations);
+            await handleCollectionFlow();
+            Deno.exit(0);
+        }
+
+        if(promptChoice === "Delete") {
+            const promptCollectionName: string = await collectionCommand(operations);
+            
+            if (promptCollectionName === "Exit") {
+                exitCommand();
+            }
+            
+            const confirmDelete = await Confirm.prompt(`Êtes-vous sûr de vouloir supprimer la collection "${promptCollectionName}" ?`);
+            
+            if (confirmDelete) {
+                await operations.deleteCollection(promptCollectionName);
+            }
+            
+            Deno.exit(0);
+        }
+
+        if( promptChoice === "Yes") {
+            await handleCollectionFlow();
+            Deno.exit(0);
         } else if (promptChoice === "Exit") {
-            console.log("Au revoir !");
+            exitCommand();
             Deno.exit(0);
         }
     })
