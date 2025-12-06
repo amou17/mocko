@@ -1,5 +1,6 @@
 import { Input } from "@cliffy/prompt";
-import { OperationsMongo } from "../../db/operations.ts";
+
+import { OperationsMongo } from "../db/operations.ts";
 
 export async function createCommand(operations: OperationsMongo) {
     const promptCollectionName: string = await Input.prompt({

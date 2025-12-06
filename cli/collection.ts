@@ -1,5 +1,6 @@
 import { Select } from "@cliffy/prompt";
-import { OperationsMongo } from "../../db/operations.ts";
+
+import { OperationsMongo } from "../db/operations.ts";
 
 export async function collectionCommand(operations: OperationsMongo) {
     const collections =  await operations.listCollections();

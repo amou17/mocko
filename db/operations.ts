@@ -1,6 +1,7 @@
 import "@std/dotenv/load";
-import { MongoConnector } from "./client.ts";
 import { AnyBulkWriteOperation, ObjectId } from "mongodb";
+
+import { MongoConnector } from "./client.ts";
 
 const uri = Deno.env.get("BASE_URL");
 const dbName = Deno.env.get("DB_NAME");

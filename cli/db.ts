@@ -1,8 +1,8 @@
 import { Command } from "@cliffy/command";
 import { Number, Confirm } from "@cliffy/prompt";
 
-import { OperationsMongo } from "../../db/operations.ts";
-import { analyzeSchemaJSON } from "../../core/schema-analyzer.ts";
+import { OperationsMongo } from "../db/operations.ts";
+import { analyzeSchemaJSON } from "../core/schema-analyzer.ts";
 import { collectionCommand, firstCommand, exitCommand, createCommand } from "./index.ts";
 
 await new Command()
