@@ -1,15 +1,36 @@
 {
-  "_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
-  "email": "jean.dupont@entreprise.fr",
-  "firstName": "Jean",
-  "lastName": "Dupont",
-  "age": 34,
-  "isActive": true,
-  "createdAt": "2024-03-15T10:30:00Z",
-  "address": {
-    "street": "15 rue de la Paix",
-    "city": "Paris",
-    "zipCode": "75001"
+  "_id": "f0e1d2c3-b4a5-6789-abcd-ef9876543210",
+  "ME150401": {
+    "se007": {
+      "de034": "FR",
+      "de035": "75001",
+      "de036": "Paris"
+    },
+    "se008": {
+      "de038": "15 rue de la Paix",
+      "de039": "Bâtiment A"
+    },
+    "gr001": [
+      {
+        "de040": "2024-05-20",
+        "de041": "14:30",
+        "de042": "DELIVRE"
+      },
+      {
+        "de040": "2024-05-22",
+        "de041": "09:15",
+        "de042": "EN TRANSIT"
+      }
+    ]
   },
-  "tags": ["premium", "verified"]
+  "metadata": {
+    "archive": {
+      "infoserf": {
+        "datereceptionCS": "2024-06-01T12:00:00Z"
+      }
+    }
+  },
+  "properties": {
+    "modelid": "ME150401"
+  }
 }
