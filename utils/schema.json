@@ -1,36 +1,13 @@
 {
-  "_id": "f0e1d2c3-b4a5-6789-abcd-ef9876543210",
-  "ME150401": {
-    "se007": {
-      "de034": "FR",
-      "de035": "75001",
-      "de036": "Paris"
-    },
-    "se008": {
-      "de038": "15 rue de la Paix",
-      "de039": "Bâtiment A"
-    },
-    "gr001": [
-      {
-        "de040": "2024-05-20",
-        "de041": "14:30",
-        "de042": "DELIVRE"
-      },
-      {
-        "de040": "2024-05-22",
-        "de041": "09:15",
-        "de042": "EN TRANSIT"
-      }
-    ]
+  "id": "550e8400-e29b-41d4-a716-446655440000",
+  "email": "jean.dupont@gmail.com",
+  "profile": {
+    "firstname": "Jean",
+    "lastname": "Dupont",
+    "phone": "06 12 34 56 78"
   },
-  "metadata": {
-    "archive": {
-      "infoserf": {
-        "datereceptionCS": "2024-06-01T12:00:00Z"
-      }
-    }
-  },
-  "properties": {
-    "modelid": "ME150401"
-  }
+  "orders": [
+    { "id": "...", "title": "Lorem ipsum dolor", "price": 423 },
+    { "id": "...", "title": "Sit amet consectetur", "price": 891 }
+  ]
 }

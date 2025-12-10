@@ -19,7 +19,6 @@ export const fieldGenerators: Record<string, () => unknown> = {
     datereceptionCS: () => faker.date.recent(),
     sourcedate: () => faker.date.recent(),
     description: () => faker.lorem.paragraph(),
-    modelid: () => faker.helpers.arrayElement(["ME150401", "ME140101", "ME050401"]),
 };
 
 export const typeGenerators: Record<string, () => unknown> = {

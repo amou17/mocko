@@ -1,7 +1,7 @@
 {
   "tasks": {
     "dev": "deno run --watch main.ts",
-    "start": "deno run -A cli/db.ts Lists --file=\"./utils/schema.json\""
+    "start": "deno run -A cli/launcher.ts Lists --file=\"./utils/schema.json\""
   },
   "imports": {
     "@cliffy/prompt": "jsr:@cliffy/prompt@^1.0.0-rc.8",
